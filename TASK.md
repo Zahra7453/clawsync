@@ -84,7 +84,19 @@
 
 - [x] Standalone features page
   - Created `features.html` with all ClawSync features
-  - Links to GitHub repo
+  - Updated logo size (36px → 48px)
+  - Reduced hero description text size
+  - Updated docs links to point to docs.html
+
+- [x] Comprehensive documentation page
+  - Created `docs.html` with Mintlify-inspired design
+  - Sidebar navigation with all sections
+  - View as Markdown / Copy Markdown buttons
+  - Covers: Quickstart, Project Structure, Convex Setup
+  - Covers: Environment Variables, Model Providers, Agent Config
+  - Covers: Soul Document, Skills System, MCP Servers
+  - Covers: Channels, X/Twitter, SyncBoard, Auth, API Keys
+  - Covers: Self Hosting, Production Checklist
 
 - [x] Documentation files
   - Created FILES.md

@@ -6,6 +6,18 @@ All notable changes to ClawSync are documented here.
 
 ### Added
 
+#### Documentation
+- Created comprehensive `docs.html` with Mintlify-inspired design
+- Sidebar navigation with section categories
+- View as Markdown and Copy Markdown buttons
+- Full setup guides for Convex, WorkOS, APIs, MCP, SyncBoard
+- Step-by-step quickstart with numbered progress
+- Environment variables reference tables
+- Model providers comparison
+- Skills system documentation
+- Channel integration guides
+- Production checklist
+
 #### Landing Page
 - Created public landing page at `/` with hero section, features grid, and call-to-action
 - Added real-time public activity feed showing agent actions
@@ -55,6 +67,9 @@ All notable changes to ClawSync are documented here.
 
 ### Changed
 
+- features.html logo increased from 36px to 48px
+- features.html hero description text reduced from 1.25rem to 1rem
+- features.html docs links now point to docs.html instead of GitHub README
 - Setup wizard now uses logo image instead of text
 - Login page uses logo image instead of text
 - SyncBoard sidebar includes logo and X navigation item

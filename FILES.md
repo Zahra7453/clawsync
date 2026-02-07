@@ -9,6 +9,7 @@ Brief descriptions of key files in the ClawSync codebase.
 | `CLAUDE.md` | Project instructions for Claude Code AI assistant |
 | `README.md` | Project documentation with setup and deployment guides |
 | `features.html` | Standalone HTML features page for marketing |
+| `docs.html` | Comprehensive documentation with Mintlify-inspired design |
 | `package.json` | Node.js dependencies and scripts |
 | `tsconfig.json` | TypeScript configuration |
 | `vite.config.ts` | Vite bundler configuration |
