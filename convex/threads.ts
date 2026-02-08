@@ -1,135 +1,68 @@
-import { query, mutation, internalQuery, internalMutation } from './_generated/server';
+import { query, internalQuery } from './_generated/server';
 import { v } from 'convex/values';
+import { components } from './_generated/api';
+import { listMessages } from '@convex-dev/agent';
+import { paginationOptsValidator } from 'convex/server';
 
 /**
  * Thread Management
  *
- * Manages conversation threads for the API.
- * Uses @convex-dev/agent for thread storage.
+ * Manages conversation threads using @convex-dev/agent component API.
+ * Thread and message data lives in component tables accessed via
+ * listMessages() and components.agent queries.
  */
 
-// List threads (internal - for API)
+// List threads by user (internal, for API)
 export const list = internalQuery({
   args: {
-    limit: v.optional(v.number()),
+    userId: v.optional(v.string()),
+    paginationOpts: v.optional(paginationOptsValidator),
   },
-  handler: async (ctx, args) => {
-    // Get threads from agent's thread table
-    const threads = await ctx.db
-      .query('agent_threads')
-      .order('desc')
-      .take(args.limit ?? 20);
-
-    return threads.map((t) => ({
-      threadId: t._id,
-      createdAt: t._creationTime,
-      metadata: t.metadata,
-    }));
-  },
-});
-
-// Get messages for a thread (internal - for API)
-export const getMessages = internalQuery({
-  args: {
-    threadId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Get messages from agent's messages table
-    const messages = await ctx.db
-      .query('agent_messages')
-      .filter((q) => q.eq(q.field('threadId'), args.threadId))
-      .order('asc')
-      .take(100);
-
-    return messages.map((m) => ({
-      id: m._id,
-      role: m.role,
-      content: m.content,
-      createdAt: m._creationTime,
-    }));
-  },
-});
-
-// Create a new thread (internal - for API)
-export const create = internalMutation({
-  args: {
-    metadata: v.optional(v.any()),
-  },
-  handler: async (ctx, args) => {
-    // Insert a new thread record
-    const threadId = await ctx.db.insert('agent_threads' as any, {
-      metadata: args.metadata ?? {},
-      status: 'active',
-    });
-
-    return {
-      threadId: threadId.toString(),
-    };
-  },
-});
-
-// Public query to list threads (for SyncBoard)
-export const listPublic = query({
-  args: {
-    limit: v.optional(v.number()),
-  },
+  returns: v.any(),
   handler: async (ctx, args) => {
     try {
-      const threads = await ctx.db
-        .query('agent_threads')
-        .order('desc')
-        .take(args.limit ?? 20);
-
-      return threads.map((t) => ({
-        threadId: t._id,
-        createdAt: t._creationTime,
-        metadata: t.metadata,
-      }));
+      if (args.userId) {
+        // Use component API to list threads by user
+        const result = await ctx.runQuery(
+          components.agent.threads.listThreadsByUserId,
+          {
+            userId: args.userId,
+            paginationOpts: args.paginationOpts ?? { cursor: null, numItems: 20 },
+          },
+        );
+        return result.page.map((t: Record<string, unknown>) => ({
+          threadId: t._id,
+          createdAt: t._creationTime,
+          metadata: t.metadata,
+        }));
+      }
+      // Without userId, return empty (component requires userId for listing)
+      return [];
     } catch {
-      // Table might not exist yet
       return [];
     }
   },
 });
 
-// Get thread by ID
-export const get = query({
+// Get messages for a thread (internal, for API)
+export const getMessages = internalQuery({
   args: {
     threadId: v.string(),
+    limit: v.optional(v.number()),
   },
+  returns: v.any(),
   handler: async (ctx, args) => {
     try {
-      const thread = await ctx.db.get(args.threadId as any);
-      if (!thread) return null;
+      const result = await listMessages(ctx, components.agent, {
+        threadId: args.threadId,
+        paginationOpts: { cursor: null, numItems: args.limit ?? 100 },
+        excludeToolMessages: true,
+      });
 
-      return {
-        threadId: thread._id,
-        createdAt: thread._creationTime,
-        metadata: thread.metadata,
-      };
-    } catch {
-      return null;
-    }
-  },
-});
-
-// Get thread messages (public - for SyncBoard)
-export const getThreadMessages = query({
-  args: {
-    threadId: v.string(),
-  },
-  handler: async (ctx, args) => {
-    try {
-      const messages = await ctx.db
-        .query('agent_messages')
-        .filter((q) => q.eq(q.field('threadId'), args.threadId))
-        .order('asc')
-        .take(100);
-
-      return messages.map((m) => ({
+      return result.page.map((m: Record<string, unknown>) => ({
         id: m._id,
         role: m.role,
-        content: m.content,
+        content: m.text ?? m.content,
         createdAt: m._creationTime,
       }));
     } catch {
@@ -138,23 +71,62 @@ export const getThreadMessages = query({
   },
 });
 
-// Delete a thread
-export const remove = mutation({
+// Public query to list thread messages (for SyncBoard)
+export const listPublic = query({
+  args: {
+    userId: v.optional(v.string()),
+    paginationOpts: v.optional(paginationOptsValidator),
+  },
+  returns: v.any(),
+  handler: async (ctx, args) => {
+    try {
+      if (args.userId) {
+        const result = await ctx.runQuery(
+          components.agent.threads.listThreadsByUserId,
+          {
+            userId: args.userId,
+            paginationOpts: args.paginationOpts ?? { cursor: null, numItems: 20 },
+          },
+        );
+        return result.page.map((t: Record<string, unknown>) => ({
+          threadId: t._id,
+          createdAt: t._creationTime,
+          metadata: t.metadata,
+        }));
+      }
+      // Without userId filter, return empty
+      // (admin thread listing needs component-level access)
+      return [];
+    } catch {
+      // Component tables may not be populated yet
+      return [];
+    }
+  },
+});
+
+// Get thread messages (public, for SyncBoard)
+export const getThreadMessages = query({
   args: {
     threadId: v.string(),
+    paginationOpts: v.optional(paginationOptsValidator),
   },
+  returns: v.any(),
   handler: async (ctx, args) => {
-    // Delete messages first
-    const messages = await ctx.db
-      .query('agent_messages')
-      .filter((q) => q.eq(q.field('threadId'), args.threadId))
-      .collect();
+    try {
+      const result = await listMessages(ctx, components.agent, {
+        threadId: args.threadId,
+        paginationOpts: args.paginationOpts ?? { cursor: null, numItems: 100 },
+        excludeToolMessages: true,
+      });
 
-    for (const msg of messages) {
-      await ctx.db.delete(msg._id);
+      return result.page.map((m: Record<string, unknown>) => ({
+        id: m._id,
+        role: m.role,
+        content: m.text ?? m.content,
+        createdAt: m._creationTime,
+      }));
+    } catch {
+      return [];
     }
-
-    // Delete thread
-    await ctx.db.delete(args.threadId as any);
   },
 });

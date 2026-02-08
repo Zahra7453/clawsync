@@ -11,6 +11,7 @@ import { v } from 'convex/values';
 // Get the current agent config
 export const get = query({
   args: {},
+  returns: v.any(),
   handler: async (ctx) => {
     const config = await ctx.db.query('agentConfig').first();
     return config;
@@ -20,6 +21,7 @@ export const get = query({
 // Internal query for agent to load config
 export const getConfig = internalQuery({
   args: {},
+  returns: v.any(),
   handler: async (ctx) => {
     return await ctx.db.query('agentConfig').first();
   },
@@ -59,6 +61,7 @@ export const update = mutation({
     domainAllowlist: v.optional(v.array(v.string())),
     uiConfig: v.optional(v.string()),
   },
+  returns: v.id('agentConfig'),
   handler: async (ctx, args) => {
     const existing = await ctx.db.query('agentConfig').first();
 

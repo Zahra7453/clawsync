@@ -5,8 +5,42 @@ All notable changes to ClawSync are documented here.
 ## [Unreleased]
 
 ### Added
+- Streaming message subscription via `convex/messages.ts` using `listMessages` + `syncStreams` from `@convex-dev/agent`
+- Frontend real-time message updates with `useThreadMessages` hook from `@convex-dev/agent/react`
+- Tool call display in chat UI with expandable cards showing input and output
+- Knowledge-lookup template executor for knowledge base skills
+- MCP server tool proxy with SSE `Accept` headers in `toolLoader.ts`
+- Dynamic agent factory (`createDynamicAgent`) for runtime model and tool resolution
+- xAI (Grok) provider support in model router
+- Voice queries split to `convex/voice/queries.ts` to fix `'use node'` conflicts
 
-#### Documentation
+### Changed
+- Upgraded `@ai-sdk/anthropic` from v1 to v2.0.59, `@ai-sdk/openai` to v2.0.89, `@ai-sdk/openai-compatible` to v1.0.32
+- Agent definition uses `languageModel` instead of `chat` (correct `@convex-dev/agent` API)
+- Tool creation uses `createTool` from `@convex-dev/agent` with `jsonSchema()` (fixes Anthropic `input_schema.type` error)
+- Model router uses `LanguageModel` type from `ai@5` (replaces deprecated `LanguageModelV1`)
+- Thread API destructuring updated for `@convex-dev/agent` return format
+- Threads management rewritten to use `@convex-dev/agent` component API (no direct table queries)
+- MCP `listResources`/`readResource` converted from `internalQuery` to `internalAction` (they use `fetch`)
+- Simplified `auth.config.ts` to empty providers (removed dead WorkOS placeholder)
+- `convex/_generated/` added to `.gitignore`
+
+### Fixed
+- `agentMail.ts`: `api.activityLog.log` changed to `internal.activityLog.log` (was runtime crash)
+- `xTwitter.ts`: `getConfigInternal` changed from `query` to `internalQuery` (was runtime crash)
+- `execute.ts`: string function reference replaced with `internal.skillSecrets.getBySkill` (was runtime crash)
+- `threads.ts`: removed queries against non-existent component tables
+- `modelProviders.ts`: `.filter()` replaced with `.withIndex('by_enabled')` for query performance
+- `agentMail.ts`: `.collect()` replaced with `.take(100)` to prevent unbounded table scans
+- `chat.ts`: safe optional chaining for token usage (`usage?.promptTokens`)
+- `toolLoader.ts`: tool names sanitized to match Anthropic pattern `^[a-zA-Z0-9_-]{1,128}`
+- Added `returns` validators to functions in `activityLog.ts`, `agentConfig.ts`, `setup.ts`, `syncboardAuth.ts`, `skillInvocations.ts`, `chat.ts`
+- Skill creation UX: template description shown as placeholder, knowledge content textarea for knowledge-lookup
+
+### Security
+- Added `by_enabled` index on `modelProviders` table for efficient queries
+
+#### Documentation (prior)
 - Created comprehensive `docs.html` with Mintlify-inspired design
 - Sidebar navigation with section categories
 - View as Markdown and Copy Markdown buttons

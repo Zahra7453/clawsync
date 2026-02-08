@@ -25,6 +25,7 @@ export const log = internalMutation({
     durationMs: v.number(),
     timestamp: v.number(),
   },
+  returns: v.id('skillInvocationLog'),
   handler: async (ctx, args) => {
     return await ctx.db.insert('skillInvocationLog', args);
   },
@@ -77,6 +78,7 @@ export const listSecurityFailures = query({
 // Cleanup old logs (called by cron)
 export const cleanup = internalMutation({
   args: {},
+  returns: v.object({ deleted: v.number() }),
   handler: async (ctx) => {
     // Keep 30 days of logs
     const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;

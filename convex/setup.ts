@@ -11,6 +11,7 @@ import { v } from 'convex/values';
 // Check if setup is needed (no agentConfig exists)
 export const isRequired = query({
   args: {},
+  returns: v.boolean(),
   handler: async (ctx) => {
     const config = await ctx.db.query('agentConfig').first();
     return config === null;
@@ -25,6 +26,7 @@ export const complete = mutation({
     model: v.string(),
     modelProvider: v.string(),
   },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     // Check if already set up
     const existing = await ctx.db.query('agentConfig').first();

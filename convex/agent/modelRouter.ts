@@ -3,7 +3,7 @@ import { internal } from '../_generated/api';
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { LanguageModelV1 } from 'ai';
+import type { LanguageModel } from 'ai';
 
 /**
  * Model Router
@@ -26,7 +26,7 @@ export interface ModelConfig {
 }
 
 export interface ResolvedModel {
-  model: LanguageModelV1;
+  model: LanguageModel;
   provider: string;
   modelId: string;
   isFallback: boolean;
@@ -83,7 +83,7 @@ export async function resolveModel(ctx: ActionCtx): Promise<ResolvedModel> {
 /**
  * Create an AI SDK model instance from provider and model ID
  */
-function createModel(provider: string, modelId: string): LanguageModelV1 {
+function createModel(provider: string, modelId: string): LanguageModel {
   switch (provider) {
     case 'anthropic':
       return anthropic(modelId);
@@ -101,6 +101,15 @@ function createModel(provider: string, modelId: string): LanguageModelV1 {
         },
       });
       return openrouter(modelId);
+    }
+
+    case 'xai': {
+      // xAI (Grok) uses OpenAI-compatible API
+      const xai = createOpenAICompatible({
+        name: 'xai',
+        baseURL: 'https://api.x.ai/v1',
+      });
+      return xai(modelId);
     }
 
     case 'opencode-zen': {
@@ -151,6 +160,11 @@ export function getAvailableProviders(): Array<{
       id: 'openrouter',
       name: 'OpenRouter',
       description: 'Access 300+ models via unified API',
+    },
+    {
+      id: 'xai',
+      name: 'xAI',
+      description: 'Grok models via xAI API',
     },
     {
       id: 'opencode-zen',

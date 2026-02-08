@@ -1,4 +1,4 @@
-import { query, mutation, action, internalMutation } from './_generated/server';
+import { query, mutation, action, internalMutation, internalQuery } from './_generated/server';
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
 
@@ -29,6 +29,7 @@ import { internal } from './_generated/api';
 // Get X configuration
 export const getConfig = query({
   args: {},
+  returns: v.any(),
   handler: async (ctx) => {
     return await ctx.db.query('xConfig').first();
   },
@@ -271,7 +272,8 @@ export const readTweet = action({
 // Internal Functions
 // ============================================
 
-export const getConfigInternal = query({
+// Internal query for actions to read X config
+export const getConfigInternal = internalQuery({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query('xConfig').first();

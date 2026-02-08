@@ -13,6 +13,16 @@ export const listPublic = query({
   args: {
     limit: v.optional(v.number()),
   },
+  returns: v.array(v.object({
+    _id: v.id('activityLog'),
+    _creationTime: v.number(),
+    actionType: v.string(),
+    summary: v.string(),
+    channel: v.optional(v.string()),
+    visibility: v.union(v.literal('public'), v.literal('private')),
+    metadata: v.optional(v.string()),
+    timestamp: v.number(),
+  })),
   handler: async (ctx, args) => {
     return await ctx.db
       .query('activityLog')
@@ -59,6 +69,7 @@ export const log = internalMutation({
     visibility: v.optional(v.union(v.literal('public'), v.literal('private'))),
     metadata: v.optional(v.string()),
   },
+  returns: v.id('activityLog'),
   handler: async (ctx, args) => {
     return await ctx.db.insert('activityLog', {
       actionType: args.actionType,
@@ -77,18 +88,22 @@ export const updateVisibility = mutation({
     id: v.id('activityLog'),
     visibility: v.union(v.literal('public'), v.literal('private')),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {
       visibility: args.visibility,
     });
+    return null;
   },
 });
 
 // Delete an activity entry
 export const remove = mutation({
   args: { id: v.id('activityLog') },
+  returns: v.null(),
   handler: async (ctx, args) => {
     await ctx.db.delete(args.id);
+    return null;
   },
 });
 

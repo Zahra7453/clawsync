@@ -118,7 +118,7 @@ function createMcpTool(serverUrl: string, mcpTool: any) {
   });
 }
 
-const inputSchema = jsonSchema({
+const inputSchema = jsonSchema<{ input: string }>({
   type: 'object' as const,
   properties: {
     input: { type: 'string', description: 'Input for the skill' },
@@ -228,7 +228,7 @@ function createWebhookSkillTool(ctx: ActionCtx, skill: Doc<'skillRegistry'>) {
 function createCodeSkillTool(ctx: ActionCtx, skill: Doc<'skillRegistry'>) {
   return createTool({
     description: skill.description,
-    args: jsonSchema({
+    args: jsonSchema<{ query: string }>({
       type: 'object' as const,
       properties: {
         query: { type: 'string', description: 'Query input' },

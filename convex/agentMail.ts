@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 import { query, mutation, action } from './_generated/server';
-import { api } from './_generated/api';
+import { api, internal } from './_generated/api';
 
 // AgentMail API base URL
 const AGENTMAIL_API_URL = 'https://api.agentmail.to/v1';
@@ -17,11 +17,22 @@ export const getConfig = query({
   },
 });
 
-// List all inboxes
+// List all inboxes (capped at 100)
 export const listInboxes = query({
   args: {},
+  returns: v.array(v.object({
+    _id: v.id('agentMailInboxes'),
+    _creationTime: v.number(),
+    inboxId: v.string(),
+    email: v.string(),
+    displayName: v.optional(v.string()),
+    isDefault: v.boolean(),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })),
   handler: async (ctx) => {
-    return await ctx.db.query('agentMailInboxes').collect();
+    return await ctx.db.query('agentMailInboxes').take(100);
   },
 });
 
@@ -145,8 +156,8 @@ export const addInbox = mutation({
     }
 
     // If this is the first inbox or marked as default, set it as default
-    const inboxCount = await ctx.db.query('agentMailInboxes').collect();
-    const isDefault = args.isDefault ?? inboxCount.length === 0;
+    const existingInboxes = await ctx.db.query('agentMailInboxes').take(1);
+    const isDefault = args.isDefault ?? existingInboxes.length === 0;
 
     // If setting as default, unset other defaults
     if (isDefault) {
@@ -281,8 +292,8 @@ export const createInbox = action({
       displayName: args.displayName,
     });
 
-    // Log activity
-    await ctx.runMutation(api.activityLog.log, {
+    // Log activity (internal mutation)
+    await ctx.runMutation(internal.activityLog.log, {
       actionType: 'agentmail_inbox_created',
       summary: `Created AgentMail inbox: ${data.email}`,
       visibility: 'private',
@@ -370,8 +381,8 @@ export const sendEmail = action({
       bodyPreview: args.body.substring(0, 200),
     });
 
-    // Log activity
-    await ctx.runMutation(api.activityLog.log, {
+    // Log activity (internal mutation)
+    await ctx.runMutation(internal.activityLog.log, {
       actionType: 'agentmail_sent',
       summary: `Sent email to ${args.to}: ${args.subject}`,
       visibility: 'private',
@@ -434,8 +445,8 @@ export const deleteInbox = action({
       await ctx.runMutation(api.agentMail.removeInbox, { id: found._id });
     }
 
-    // Log activity
-    await ctx.runMutation(api.activityLog.log, {
+    // Log activity (internal mutation)
+    await ctx.runMutation(internal.activityLog.log, {
       actionType: 'agentmail_inbox_deleted',
       summary: `Deleted AgentMail inbox: ${args.inboxId}`,
       visibility: 'private',

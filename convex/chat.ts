@@ -3,7 +3,7 @@
 import { action, internalAction } from './_generated/server';
 import { v } from 'convex/values';
 import { internal } from './_generated/api';
-import { clawsyncAgent } from './agent/clawsync';
+import { clawsyncAgent, createDynamicAgent } from './agent/clawsync';
 import { rateLimiter } from './rateLimits';
 import { loadTools } from './agent/toolLoader';
 import { stepCountIs } from '@convex-dev/agent';
@@ -13,6 +13,7 @@ import { stepCountIs } from '@convex-dev/agent';
  *
  * Handles sending messages to the agent and receiving responses.
  * Uses @convex-dev/agent for thread management and streaming.
+ * Model and tools are resolved dynamically from SyncBoard config.
  */
 
 // Send a message and get a response
@@ -22,6 +23,14 @@ export const send = action({
     message: v.string(),
     sessionId: v.string(),
   },
+  returns: v.object({
+    response: v.optional(v.string()),
+    error: v.optional(v.string()),
+    threadId: v.optional(v.string()),
+    toolCalls: v.optional(
+      v.array(v.object({ name: v.string(), args: v.string(), result: v.string() }))
+    ),
+  }),
   handler: async (ctx, args) => {
     // Rate limit check
     const { ok } = await rateLimiter.limit(ctx, 'publicChat', {
@@ -57,27 +66,30 @@ export const send = action({
     }
 
     try {
-      // Create or continue thread
+      // Use dynamic agent for SyncBoard-configured model + tools
+      const agent = await createDynamicAgent(ctx);
+
+      // Create or continue thread (destructure per @convex-dev/agent API)
       let threadId = args.threadId;
       let thread;
       if (threadId) {
-        ({ thread } = await clawsyncAgent.continueThread(ctx, { threadId }));
+        ({ thread } = await agent.continueThread(ctx, { threadId }));
       } else {
-        const created = await clawsyncAgent.createThread(ctx, {});
+        const created = await agent.createThread(ctx, {});
         threadId = created.threadId;
         thread = created.thread;
       }
 
-      // Load soul document from config
+      // Load soul document from config for system prompt
       const config = await ctx.runQuery(internal.agentConfig.getConfig);
       const system = config
         ? `${config.soulDocument}\n\n${config.systemPrompt}`
         : undefined;
 
-      // Load tools from skill registry
+      // Load tools from skill registry + MCP servers
       const tools = await loadTools(ctx);
 
-      // Generate response
+      // Generate response with tools and multi-step support
       const hasTools = Object.keys(tools).length > 0;
       const result = await thread.generateText(
         {
@@ -146,6 +158,10 @@ export const stream = internalAction({
     message: v.string(),
     sessionId: v.string(),
   },
+  returns: v.object({
+    response: v.string(),
+    threadId: v.string(),
+  }),
   handler: async (ctx, args) => {
     // Rate limit check
     const { ok } = await rateLimiter.limit(ctx, 'publicChat', {
@@ -156,12 +172,15 @@ export const stream = internalAction({
       throw new Error('Rate limit exceeded');
     }
 
+    // Use dynamic agent for SyncBoard-configured model + tools
+    const agent = await createDynamicAgent(ctx);
+
     let threadId = args.threadId;
     let thread;
     if (threadId) {
-      ({ thread } = await clawsyncAgent.continueThread(ctx, { threadId }));
+      ({ thread } = await agent.continueThread(ctx, { threadId }));
     } else {
-      const created = await clawsyncAgent.createThread(ctx, {});
+      const created = await agent.createThread(ctx, {});
       threadId = created.threadId;
       thread = created.thread;
     }
@@ -183,8 +202,12 @@ export const getHistory = action({
   args: {
     threadId: v.string(),
   },
+  returns: v.object({
+    messages: v.any(),
+  }),
   handler: async (ctx, args) => {
     try {
+      // Use static agent for read-only history lookup
       const result = await clawsyncAgent.listMessages(ctx, {
         threadId: args.threadId,
         paginationOpts: { numItems: 100, cursor: null },
@@ -205,6 +228,14 @@ export const apiSend = internalAction({
     sessionId: v.string(),
     apiKeyId: v.optional(v.id('apiKeys')),
   },
+  returns: v.object({
+    response: v.optional(v.string()),
+    error: v.optional(v.string()),
+    threadId: v.optional(v.string()),
+    tokensUsed: v.optional(v.number()),
+    inputTokens: v.optional(v.number()),
+    outputTokens: v.optional(v.number()),
+  }),
   handler: async (ctx, args) => {
     // Validate message length
     const maxLength = 4000;
@@ -216,13 +247,16 @@ export const apiSend = internalAction({
     }
 
     try {
+      // Use dynamic agent for SyncBoard-configured model + tools
+      const agent = await createDynamicAgent(ctx);
+
       // Create or continue thread
       let threadId = args.threadId;
       let thread;
       if (threadId) {
-        ({ thread } = await clawsyncAgent.continueThread(ctx, { threadId }));
+        ({ thread } = await agent.continueThread(ctx, { threadId }));
       } else {
-        const created = await clawsyncAgent.createThread(ctx, {});
+        const created = await agent.createThread(ctx, {});
         threadId = created.threadId;
         thread = created.thread;
       }
@@ -241,14 +275,16 @@ export const apiSend = internalAction({
       });
 
       // Get token usage from result if available
-      const usage = (result as any).usage ?? {};
+      const usage = (result as unknown as Record<string, unknown>).usage as
+        | { promptTokens?: number; completionTokens?: number }
+        | undefined;
 
       return {
         response: result.text,
         threadId,
-        tokensUsed: (usage.promptTokens ?? 0) + (usage.completionTokens ?? 0),
-        inputTokens: usage.promptTokens ?? 0,
-        outputTokens: usage.completionTokens ?? 0,
+        tokensUsed: (usage?.promptTokens ?? 0) + (usage?.completionTokens ?? 0),
+        inputTokens: usage?.promptTokens ?? 0,
+        outputTokens: usage?.completionTokens ?? 0,
       };
     } catch (error) {
       console.error('API Chat error:', error);

@@ -8,9 +8,23 @@ import { v } from 'convex/values';
  * references (never the actual keys).
  */
 
+// Validator for provider documents
+const providerValidator = v.object({
+  _id: v.id('modelProviders'),
+  _creationTime: v.number(),
+  providerId: v.string(),
+  displayName: v.string(),
+  baseUrl: v.string(),
+  apiKeyEnvVar: v.string(),
+  enabled: v.boolean(),
+  rateLimitPerMinute: v.number(),
+  updatedAt: v.number(),
+});
+
 // Get all providers
 export const list = query({
   args: {},
+  returns: v.array(providerValidator),
   handler: async (ctx) => {
     return await ctx.db.query('modelProviders').take(50);
   },
@@ -19,6 +33,7 @@ export const list = query({
 // Get provider by ID
 export const getById = query({
   args: { providerId: v.string() },
+  returns: v.union(providerValidator, v.null()),
   handler: async (ctx, args) => {
     return await ctx.db
       .query('modelProviders')
@@ -27,13 +42,14 @@ export const getById = query({
   },
 });
 
-// Get enabled providers
+// Get enabled providers (uses index instead of .filter())
 export const getEnabled = query({
   args: {},
+  returns: v.array(providerValidator),
   handler: async (ctx) => {
     return await ctx.db
       .query('modelProviders')
-      .filter((q) => q.eq(q.field('enabled'), true))
+      .withIndex('by_enabled', (q) => q.eq('enabled', true))
       .take(50);
   },
 });
@@ -48,6 +64,7 @@ export const upsert = mutation({
     enabled: v.optional(v.boolean()),
     rateLimitPerMinute: v.optional(v.number()),
   },
+  returns: v.id('modelProviders'),
   handler: async (ctx, args) => {
     const existing = await ctx.db
       .query('modelProviders')
@@ -81,6 +98,7 @@ export const upsert = mutation({
 // Toggle provider enabled status
 export const toggle = mutation({
   args: { providerId: v.string() },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const provider = await ctx.db
       .query('modelProviders')
@@ -93,12 +111,14 @@ export const toggle = mutation({
       enabled: !provider.enabled,
       updatedAt: Date.now(),
     });
+    return null;
   },
 });
 
-// Seed default providers
+// Seed default providers (including xAI)
 export const seed = mutation({
   args: {},
+  returns: v.object({ seeded: v.number() }),
   handler: async (ctx) => {
     const providers = [
       {
@@ -114,6 +134,14 @@ export const seed = mutation({
         displayName: 'OpenAI',
         baseUrl: 'https://api.openai.com',
         apiKeyEnvVar: 'OPENAI_API_KEY',
+        enabled: false,
+        rateLimitPerMinute: 100,
+      },
+      {
+        providerId: 'xai',
+        displayName: 'xAI',
+        baseUrl: 'https://api.x.ai/v1',
+        apiKeyEnvVar: 'XAI_API_KEY',
         enabled: false,
         rateLimitPerMinute: 100,
       },

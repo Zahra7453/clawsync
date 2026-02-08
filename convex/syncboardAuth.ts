@@ -34,6 +34,7 @@ function generateSessionToken(): string {
 // Check if SyncBoard auth is enabled (password is set)
 export const isEnabled = query({
   args: {},
+  returns: v.boolean(),
   handler: async () => {
     const passwordHash = process.env.SYNCBOARD_PASSWORD_HASH;
     return !!passwordHash && passwordHash.length > 0;
@@ -45,6 +46,12 @@ export const login = mutation({
   args: {
     password: v.string(),
   },
+  returns: v.object({
+    success: v.boolean(),
+    token: v.optional(v.string()),
+    error: v.optional(v.string()),
+    expiresAt: v.optional(v.number()),
+  }),
   handler: async (ctx, args) => {
     const storedHash = process.env.SYNCBOARD_PASSWORD_HASH;
 
@@ -97,6 +104,10 @@ export const verifySession = query({
   args: {
     token: v.string(),
   },
+  returns: v.object({
+    valid: v.boolean(),
+    expired: v.optional(v.boolean()),
+  }),
   handler: async (ctx, args) => {
     // If no password is set, auth is disabled - always valid
     const storedHash = process.env.SYNCBOARD_PASSWORD_HASH;
@@ -134,6 +145,7 @@ export const logout = mutation({
   args: {
     token: v.string(),
   },
+  returns: v.object({ success: v.boolean() }),
   handler: async (ctx, args) => {
     const session = await ctx.db
       .query('syncSessions')

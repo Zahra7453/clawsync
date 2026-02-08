@@ -2,6 +2,7 @@
 
 import { internalAction } from '../../../_generated/server';
 import { v } from 'convex/values';
+import { internal } from '../../../_generated/api';
 
 /**
  * Template Skill Executor
@@ -15,6 +16,7 @@ export const execute = internalAction({
     config: v.string(),
     input: v.string(),
   },
+  returns: v.string(),
   handler: async (_ctx, args) => {
     const { templateId, config, input } = args;
     const parsedConfig = JSON.parse(config);
@@ -45,6 +47,7 @@ export const webhookCaller = internalAction({
     input: v.string(),
     skillId: v.id('skillRegistry'),
   },
+  returns: v.string(),
   handler: async (ctx, args) => {
     const { config, input, skillId } = args;
     const parsedConfig = JSON.parse(config);
@@ -54,10 +57,9 @@ export const webhookCaller = internalAction({
       throw new Error('Webhook URL not configured');
     }
 
-    // Get secrets for this skill
+    // Get secrets for this skill via proper function reference
     const secrets = await ctx.runQuery(
-      // @ts-expect-error - internal function
-      'skillSecrets:getBySkill',
+      internal.skillSecrets.getBySkill,
       { skillId }
     );
 

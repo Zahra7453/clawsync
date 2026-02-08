@@ -152,6 +152,36 @@
   - Features: create/delete inboxes, send/receive emails, rate limits
   - MCP tools available for agent email operations
 
+### Deep Audit and PR #1 Merge
+
+- [x] Deep audit of entire codebase for errors, issues, and bugs
+  - Identified 10+ critical, moderate, and minor issues across backend
+  - Runtime crashes from wrong internal/public function references
+  - Missing `returns` validators on Convex functions
+  - Unbounded table scans and `.filter()` instead of indexes
+
+- [x] Fix all audit issues
+  - Fixed `agentMail.ts` api.activityLog.log to internal (3 places)
+  - Fixed `xTwitter.ts` getConfigInternal from query to internalQuery
+  - Fixed `execute.ts` string function ref to proper internal reference
+  - Fixed `modelProviders.ts` .filter() to .withIndex('by_enabled')
+  - Fixed `agentMail.ts` .collect() to .take() limits
+  - Added `returns` validators to 7 backend files
+  - Added xAI provider to model router and seed data
+
+- [x] Merge PR #1: Fix AI SDK compatibility, tool loading, and skill system
+  - Merged `fix/ai-sdk-compat-and-streaming` branch into main
+  - Resolved 3 merge conflicts (clawsync.ts, chat.ts, threads.ts)
+  - Combined dynamic agent factory with PR's `languageModel` API fix
+  - Combined thread destructuring fix with dynamic model resolution
+  - AI SDK upgraded: anthropic v2, openai v2, openai-compatible v1
+
+- [x] Post-merge type safety fixes
+  - Fixed `LanguageModelV1` to `LanguageModel` in modelRouter (ai@5 migration)
+  - Fixed `jsonSchema` typing with generic params in toolLoader
+  - Fixed `result as Record` cast in chat.ts
+  - Ran `npm install` to sync installed packages with package.json
+
 ---
 
 ## In Progress

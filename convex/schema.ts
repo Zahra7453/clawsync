@@ -27,7 +27,9 @@ export default defineSchema({
     enabled: v.boolean(),
     rateLimitPerMinute: v.number(),
     updatedAt: v.number(),
-  }).index('by_provider', ['providerId']),
+  })
+    .index('by_provider', ['providerId'])
+    .index('by_enabled', ['enabled']),
 
   // Skills registry (all three types)
   skillRegistry: defineTable({

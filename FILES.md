@@ -27,16 +27,24 @@ Brief descriptions of key files in the ClawSync codebase.
 | `syncboardAuth.ts` | SyncBoard password authentication |
 | `xTwitter.ts` | X/Twitter API v2 integration |
 | `agentMail.ts` | AgentMail email integration |
-| `auth.config.ts` | WorkOS AuthKit JWT validation (placeholder) |
+| `auth.config.ts` | Auth configuration (empty providers placeholder) |
+| `messages.ts` | Streaming message subscription with `listMessages` + `syncStreams` |
 
 ### convex/agent/
 
 | File | Description |
 |------|-------------|
-| `clawsync.ts` | Agent definition with dynamic tool loading |
+| `clawsync.ts` | Agent definition with `languageModel` API and `createDynamicAgent` factory |
 | `security.ts` | Security checker (runs on every tool invocation) |
-| `toolLoader.ts` | Assembles tools from skills + MCP servers |
-| `modelRouter.ts` | Resolves provider + model from agentConfig |
+| `toolLoader.ts` | Assembles tools from skills + MCP servers using `createTool` and `jsonSchema` |
+| `modelRouter.ts` | Resolves provider + model from agentConfig (supports anthropic, openai, xai, openrouter) |
+
+### convex/voice/
+
+| File | Description |
+|------|-------------|
+| `providers.ts` | Voice TTS/STT actions (ElevenLabs, OpenAI) |
+| `queries.ts` | Voice provider queries, session mutations (split from providers for `'use node'`) |
 
 ### convex/lib/
 
