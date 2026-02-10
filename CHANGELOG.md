@@ -5,6 +5,19 @@ All notable changes to ClawSync are documented here.
 ## [Unreleased]
 
 ### Added
+- Media file manager (Convex native storage default, Cloudflare R2 optional) with upload, list, delete, and stats
+- Stagehand browser automation integration (extract, act, observe, agent) via @browserbasehq/convex-stagehand
+- Firecrawl web scraping integration with durable caching via convex-firecrawl-scrape
+- AI Analytics with weekly cron reports and manual trigger (calls Anthropic or OpenAI for analysis)
+- Research projects feature (competitive, topic, realtime X/Twitter, API sources) with findings
+- Skills marketplace with external source registries (GitHub repos, Skills Directory, custom JSON)
+- Supermemory persistent agent memory with auto-store conversations and auto-inject context
+- SyncBoard nav items for Media, Stagehand, Firecrawl, Research, Analytics, and Memory
+- R2, Stagehand, and Firecrawl Convex component registrations in convex.config.ts
+- 9 new schema tables: mediaFiles, stagehandJobs, aiAnalyticsReports, researchProjects, researchFindings, researchSources, externalSkillSources, importedSkills, supermemoryConfig
+- Skills page Browse and Sources tabs for marketplace management
+- X/Twitter search recent tweets action for research
+- Environment variable support for R2, Browserbase, Firecrawl, X Bearer Token, and Supermemory
 - `convex/xTwitterActions.ts` for Node.js runtime X/Twitter actions (split from xTwitter.ts)
 - `threads.create` internal mutation for HTTP API thread creation
 - Streaming message subscription via `convex/messages.ts` using `listMessages` + `syncStreams` from `@convex-dev/agent`

@@ -18,6 +18,11 @@ import {
   ClipboardText,
   XLogo,
   EnvelopeSimple,
+  Browser,
+  ChartLine,
+  MagnifyingGlass,
+  CloudArrowUp,
+  Image,
 } from "@phosphor-icons/react";
 
 export function LandingPage() {
@@ -178,6 +183,56 @@ export function LandingPage() {
               <p>
                 Email inboxes for your agent. Send, receive, and process emails
                 via API with rate limits.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <Image size={32} weight="regular" />
+              </div>
+              <h3>File Storage</h3>
+              <p>
+                Upload and manage files with Convex native storage or Cloudflare
+                R2 as an optional backend.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <Browser size={32} weight="regular" />
+              </div>
+              <h3>Browser Automation</h3>
+              <p>
+                Extract data, perform actions, or run autonomous agents on any
+                URL with Stagehand and Firecrawl.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <ChartLine size={32} weight="regular" />
+              </div>
+              <h3>AI Analytics</h3>
+              <p>
+                Weekly deep analysis of metrics with anomaly detection, trends,
+                and recommendations. Manual trigger available.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <MagnifyingGlass size={32} weight="regular" />
+              </div>
+              <h3>Agent Research</h3>
+              <p>
+                Competitive analysis, topic research, and real-time X search.
+                Connect external APIs for data gathering.
+              </p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon">
+                <CloudArrowUp size={32} weight="regular" />
+              </div>
+              <h3>Persistent Memory</h3>
+              <p>
+                Supermemory integration for long-term recall. Conversations
+                stored automatically, context injected per query.
               </p>
             </div>
           </div>

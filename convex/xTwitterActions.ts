@@ -157,6 +157,35 @@ export const readTweet = action({
   },
 });
 
+// Search recent tweets (for research feature)
+export const searchRecentTweets = action({
+  args: {
+    query: v.string(),
+    maxResults: v.optional(v.number()),
+  },
+  returns: v.any(),
+  handler: async (ctx, args) => {
+    const bearerToken = process.env.X_BEARER_TOKEN;
+    if (!bearerToken) {
+      throw new Error('X_BEARER_TOKEN not configured');
+    }
+
+    const maxResults = Math.min(args.maxResults ?? 20, 100);
+    const url = `https://api.twitter.com/2/tweets/search/recent?query=${encodeURIComponent(args.query)}&max_results=${maxResults}&tweet.fields=author_id,created_at,public_metrics&expansions=author_id&user.fields=username,name,profile_image_url`;
+
+    const response: Response = await fetch(url, {
+      headers: { Authorization: `Bearer ${bearerToken}` },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`X API search failed: ${errorText}`);
+    }
+
+    return await response.json();
+  },
+});
+
 // ============================================
 // OAuth 1.0a Helper (simplified)
 // ============================================

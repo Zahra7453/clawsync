@@ -2,6 +2,47 @@
 
 ## Completed Tasks
 
+### SyncBoard Feature Expansion (2026-02-09)
+
+- [x] Media file manager (Convex native default, R2 optional)
+  - `convex/media.ts` (upload URL, save, list, delete, stats)
+  - `convex/r2Storage.ts` (R2 presigned upload, save, URL retrieval)
+  - `src/pages/SyncBoardMedia.tsx` frontend
+- [x] Stagehand browser automation
+  - `convex/stagehand.ts` (job storage queries/mutations)
+  - `convex/stagehandActions.ts` (Node.js extract, act, observe, agent)
+  - `src/pages/SyncBoardStagehand.tsx` frontend
+- [x] Firecrawl web scraping
+  - `convex/firecrawl.ts` (exposeApi with auth wrapper)
+  - `src/pages/SyncBoardFirecrawl.tsx` frontend
+- [x] AI Analytics reports
+  - `convex/analytics.ts` (metrics snapshot aggregation)
+  - `convex/analyticsReport.ts` (report CRUD, manual trigger)
+  - `convex/analyticsReportAction.ts` (Node.js AI generation)
+  - `convex/analyticsCron.ts` (weekly Monday 7AM UTC cron)
+  - `src/pages/SyncBoardAnalytics.tsx` frontend
+- [x] Research projects
+  - `convex/research.ts` (project/findings/sources CRUD)
+  - `convex/researchActions.ts` (Node.js: competitive, topic, realtime, API)
+  - `src/pages/SyncBoardResearch.tsx` frontend
+- [x] Skills marketplace
+  - `convex/skillsMarketplace.ts` (source management, browse, activate/deactivate)
+  - `convex/skillsMarketplaceActions.ts` (Node.js sync from GitHub, registries)
+  - Updated `src/pages/SyncBoardSkills.tsx` with Browse and Sources tabs
+- [x] Supermemory persistent agent memory
+  - `convex/supermemory.ts` (config queries/mutations)
+  - `convex/supermemoryActions.ts` (Node.js: add, search, store, inject)
+  - `src/pages/SyncBoardMemory.tsx` frontend
+  - Integrated into `convex/chat.ts` for auto-inject and auto-store
+- [x] Schema expanded with 9 new tables
+- [x] Convex component registrations (r2, stagehand, firecrawl)
+- [x] SyncBoard navigation updated with 6 new nav items
+- [x] App.tsx routes added for all new pages
+- [x] .env.example updated with all new env vars
+- [x] FILES.md, CHANGELOG.md, TASK.md updated
+- [x] Convex codegen passes clean
+- [x] Zero new TypeScript errors introduced
+
 ### Phase 0: Fork Owner MVP
 
 - [x] SyncBoard password protection

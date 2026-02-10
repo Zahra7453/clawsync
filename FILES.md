@@ -30,6 +30,21 @@ Brief descriptions of key files in the ClawSync codebase.
 | `agentMail.ts` | AgentMail email integration |
 | `auth.config.ts` | Auth configuration (empty providers placeholder) |
 | `messages.ts` | Streaming message subscription with `listMessages` + `syncStreams` |
+| `media.ts` | Convex native file storage (upload URL, save, list, delete, stats) |
+| `r2Storage.ts` | Cloudflare R2 storage integration (optional, via @convex-dev/r2) |
+| `stagehand.ts` | Stagehand job storage (mutations/queries for browser automation jobs) |
+| `stagehandActions.ts` | Stagehand browser automation actions (Node.js: extract, act, observe, agent) |
+| `firecrawl.ts` | Firecrawl web scraping component (exposeApi wrapper with auth) |
+| `analytics.ts` | Internal metrics snapshot aggregation for AI analytics |
+| `analyticsReport.ts` | AI analytics report storage, listing, and manual trigger |
+| `analyticsReportAction.ts` | AI analytics report generation action (Node.js: calls Anthropic/OpenAI) |
+| `analyticsCron.ts` | Cron job for weekly AI analytics report generation |
+| `research.ts` | Research project and findings CRUD (queries/mutations) |
+| `researchActions.ts` | Research execution actions (Node.js: competitive, topic, realtime, API) |
+| `skillsMarketplace.ts` | Skills marketplace source management, browsing, activation (queries/mutations) |
+| `skillsMarketplaceActions.ts` | Skills marketplace sync action (Node.js: fetches from GitHub, registries) |
+| `supermemory.ts` | Supermemory config queries and mutations |
+| `supermemoryActions.ts` | Supermemory actions (Node.js: add/search memories, store conversations) |
 
 ### convex/agent/
 
@@ -75,6 +90,12 @@ Brief descriptions of key files in the ClawSync codebase.
 | `SyncBoardThreads.tsx` | Conversation thread viewer |
 | `SyncBoardActivity.tsx` | Activity log viewer |
 | `SyncBoardConfig.tsx` | General configuration |
+| `SyncBoardMedia.tsx` | Media file manager (upload, list, delete with Convex or R2) |
+| `SyncBoardStagehand.tsx` | Stagehand browser automation interface |
+| `SyncBoardFirecrawl.tsx` | Firecrawl web scraping interface |
+| `SyncBoardResearch.tsx` | Research project manager (competitive, topic, realtime, API) |
+| `SyncBoardAnalytics.tsx` | AI analytics report viewer and manual trigger |
+| `SyncBoardMemory.tsx` | Supermemory configuration and memory management |
 
 ### src/components/
 

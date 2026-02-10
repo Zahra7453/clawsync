@@ -85,9 +85,25 @@ export const send = action({
         soulDocument?: string;
         systemPrompt?: string;
       } | null = await ctx.runQuery(internal.agentConfig.getConfig as any);
-      const system: string | undefined = config
+
+      let system: string | undefined = config
         ? `${config.soulDocument}\n\n${config.systemPrompt}`
         : undefined;
+
+      // Inject Supermemory context if configured (optional)
+      try {
+        const memoryContext: string = await ctx.runAction(
+          internal.supermemoryActions.getMemoryContext,
+          { query: args.message }
+        );
+        if (memoryContext) {
+          system = system
+            ? `${system}\n\n--- Memory Context ---\n${memoryContext}`
+            : memoryContext;
+        }
+      } catch {
+        // Supermemory not configured; continue without it
+      }
 
       // Load tools from skill registry + MCP servers
       const tools = await loadTools(ctx);
@@ -137,6 +153,15 @@ export const send = action({
             }
           }
         }
+      }
+
+      // Store conversation in Supermemory (fire and forget)
+      try {
+        await ctx.runAction(internal.supermemoryActions.storeConversation, {
+          conversation: `User: ${args.message}\nAssistant: ${result.text}`,
+        });
+      } catch {
+        // Supermemory not configured; skip
       }
 
       return {
