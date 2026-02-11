@@ -27,6 +27,10 @@ import { SyncBoardFirecrawl } from './pages/SyncBoardFirecrawl';
 import { SyncBoardResearch } from './pages/SyncBoardResearch';
 import { SyncBoardAnalytics } from './pages/SyncBoardAnalytics';
 import { SyncBoardMemory } from './pages/SyncBoardMemory';
+import { SyncBoardAgents } from './pages/SyncBoardAgents';
+import { SyncBoardAgentDetail } from './pages/SyncBoardAgentDetail';
+import { SyncBoardSouls } from './pages/SyncBoardSouls';
+import { SyncBoardAgentFeed } from './pages/SyncBoardAgentFeed';
 
 // Wrapper component to check if setup is required
 function SetupGuard({ children }: { children: React.ReactNode }) {
@@ -201,6 +205,12 @@ export function App() {
           <Route path="/syncboard/research" element={<SyncBoardAuthGuard><SyncBoardResearch /></SyncBoardAuthGuard>} />
           <Route path="/syncboard/analytics" element={<SyncBoardAuthGuard><SyncBoardAnalytics /></SyncBoardAuthGuard>} />
           <Route path="/syncboard/memory" element={<SyncBoardAuthGuard><SyncBoardMemory /></SyncBoardAuthGuard>} />
+
+          {/* Multi-Agent routes */}
+          <Route path="/syncboard/agents" element={<SyncBoardAuthGuard><SyncBoardAgents /></SyncBoardAuthGuard>} />
+          <Route path="/syncboard/agents/:id" element={<SyncBoardAuthGuard><SyncBoardAgentDetail /></SyncBoardAuthGuard>} />
+          <Route path="/syncboard/souls" element={<SyncBoardAuthGuard><SyncBoardSouls /></SyncBoardAuthGuard>} />
+          <Route path="/syncboard/agent-feed" element={<SyncBoardAuthGuard><SyncBoardAgentFeed /></SyncBoardAuthGuard>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/chat" replace />} />

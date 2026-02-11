@@ -5,6 +5,28 @@ All notable changes to ClawSync are documented here.
 ## [Unreleased]
 
 ### Added
+- Multi-agent system: create, configure, and run multiple agents simultaneously
+- Per-agent skill and MCP server assignments with `agentAssignments.ts`
+- Shared soul documents: reusable personality/instruction sets across agents via `souls.ts`
+- Agent operational controls: auto-run, pause, restart, single task, think-to-continue modes
+- Agent-to-agent interaction via dynamically generated ask_agent tools in `toolLoader.ts`
+- Agent interaction logging and retrieval via `agentInteractions.ts`
+- Agent selector dropdown in chat header for switching active agent
+- SyncBoard Agents page with agent cards, status indicators, and create form
+- SyncBoard Agent Detail page with tabs for overview, soul, model, skills, MCP, and activity
+- SyncBoard Souls page for managing shared soul documents
+- SyncBoard Agent Feed page with unified activity timeline and agent filter chips
+- Per-agent activity feed filtering via `activityLog.listByAgent` query
+- Auto-migration from single-agent `agentConfig` to multi-agent system in `setup.ts`
+- HTTP API `GET /api/v1/agents` endpoint for listing all agents
+- HTTP API `POST /api/v1/agent/chat` now accepts optional `agentId` parameter
+- 5 new schema tables: `agents`, `souls`, `agentSkillAssignments`, `agentMcpAssignments`, `agentInteractions`
+- `agentId` field added to `activityLog` table with `by_agentId` index
+- `resolveModelFromConfig` in `modelRouter.ts` for per-agent model resolution
+- AgentCard, AgentControls, AgentSelector, AgentFeedItem frontend components
+- SyncBoard sidebar navigation entries for Agents, Souls, and Agent Feed
+- App.tsx routes for `/syncboard/agents`, `/syncboard/agents/:id`, `/syncboard/souls`, `/syncboard/agent-feed`
+- Multi-Agent, Shared Soul Documents, and Agent Controls feature cards on features.html
 - Media file manager (Convex native storage default, Cloudflare R2 optional) with upload, list, delete, and stats
 - Stagehand browser automation integration (extract, act, observe, agent) via @browserbasehq/convex-stagehand
 - Firecrawl web scraping integration with durable caching via convex-firecrawl-scrape

@@ -131,17 +131,19 @@ export default defineSchema({
     updatedAt: v.number(),
   }).index('by_name', ['name']),
 
-  // Activity log
+  // Activity log (agentId added for multi-agent support)
   activityLog: defineTable({
     actionType: v.string(),
     summary: v.string(),
     channel: v.optional(v.string()),
+    agentId: v.optional(v.id('agents')),
     visibility: v.union(v.literal('public'), v.literal('private')),
     metadata: v.optional(v.string()),
     timestamp: v.number(),
   })
     .index('by_visibility_timestamp', ['visibility', 'timestamp'])
-    .index('by_channel', ['channel']),
+    .index('by_channel', ['channel'])
+    .index('by_agentId', ['agentId']),
 
   // Channel configs
   channelConfig: defineTable({
@@ -538,6 +540,83 @@ export default defineSchema({
     .index('by_source', ['sourceId'])
     .index('by_status', ['status'])
     .index('by_externalId', ['externalId']),
+
+  // ============================================
+  // Multi-Agent System
+  // ============================================
+
+  // Individual agent configurations
+  agents: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    soulId: v.optional(v.id('souls')),
+    soulDocument: v.optional(v.string()), // Inline soul if no shared soul
+    systemPrompt: v.optional(v.string()),
+    model: v.string(),
+    modelProvider: v.string(),
+    fallbackModel: v.optional(v.string()),
+    fallbackProvider: v.optional(v.string()),
+    status: v.union(
+      v.literal('running'),
+      v.literal('paused'),
+      v.literal('idle'),
+      v.literal('error')
+    ),
+    mode: v.union(
+      v.literal('auto'),
+      v.literal('paused'),
+      v.literal('single_task'),
+      v.literal('think_to_continue')
+    ),
+    avatar: v.optional(v.string()), // Icon identifier or hex color
+    isDefault: v.boolean(),
+    order: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index('by_status', ['status'])
+    .index('by_default', ['isDefault'])
+    .index('by_order', ['order']),
+
+  // Shared soul documents (many agents can reference one soul)
+  souls: defineTable({
+    name: v.string(),
+    document: v.string(), // Markdown content
+    systemPrompt: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index('by_name', ['name']),
+
+  // Per-agent skill assignments
+  agentSkillAssignments: defineTable({
+    agentId: v.id('agents'),
+    skillId: v.id('skillRegistry'),
+    enabled: v.boolean(),
+  })
+    .index('by_agentId', ['agentId'])
+    .index('by_skillId', ['skillId']),
+
+  // Per-agent MCP server assignments
+  agentMcpAssignments: defineTable({
+    agentId: v.id('agents'),
+    mcpServerId: v.id('mcpServers'),
+    enabled: v.boolean(),
+  })
+    .index('by_agentId', ['agentId'])
+    .index('by_mcpServerId', ['mcpServerId']),
+
+  // Agent-to-agent interaction log
+  agentInteractions: defineTable({
+    fromAgentId: v.id('agents'),
+    toAgentId: v.id('agents'),
+    content: v.string(),
+    response: v.optional(v.string()),
+    threadId: v.optional(v.string()),
+    timestamp: v.number(),
+  })
+    .index('by_fromAgentId', ['fromAgentId'])
+    .index('by_toAgentId', ['toAgentId'])
+    .index('by_timestamp', ['timestamp']),
 
   // ============================================
   // Supermemory (persistent agent memory)

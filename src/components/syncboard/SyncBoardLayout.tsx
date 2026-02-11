@@ -21,11 +21,17 @@ import {
   MagnifyingGlass,
   ChartLine,
   CloudArrowUp,
+  UsersThree,
+  BookOpen,
+  ListBullets,
 } from '@phosphor-icons/react';
 import './SyncBoardLayout.css';
 
 const navItems = [
   { path: '/syncboard', label: 'Overview', Icon: ChartBar },
+  { path: '/syncboard/agents', label: 'Agents', Icon: UsersThree },
+  { path: '/syncboard/souls', label: 'Souls', Icon: BookOpen },
+  { path: '/syncboard/agent-feed', label: 'Agent Feed', Icon: ListBullets },
   { path: '/syncboard/soul', label: 'Soul Document', Icon: Brain },
   { path: '/syncboard/models', label: 'Models', Icon: Robot },
   { path: '/syncboard/skills', label: 'Skills', Icon: Lightning },
@@ -46,7 +52,7 @@ const navItems = [
 ];
 
 interface SyncBoardLayoutProps {
-  title: string;
+  title?: string;
   children: ReactNode;
 }
 

@@ -21,6 +21,7 @@ export const send = action({
     threadId: v.optional(v.string()),
     message: v.string(),
     sessionId: v.string(),
+    agentId: v.optional(v.id('agents')),
   },
   returns: v.object({
     response: v.optional(v.string()),
@@ -65,8 +66,30 @@ export const send = action({
     }
 
     try {
+      // Check agent status/mode if agentId provided
+      if (args.agentId) {
+        const agentRecord: any = await ctx.runQuery(
+          internal.agents.getInternal,
+          { agentId: args.agentId }
+        );
+        if (agentRecord) {
+          if (agentRecord.status === 'paused' || agentRecord.mode === 'paused') {
+            return {
+              error: `Agent "${agentRecord.name}" is currently paused.`,
+              threadId: args.threadId,
+            };
+          }
+          if (agentRecord.status === 'error') {
+            return {
+              error: `Agent "${agentRecord.name}" is in an error state.`,
+              threadId: args.threadId,
+            };
+          }
+        }
+      }
+
       // Use dynamic agent for SyncBoard-configured model + tools
-      const agent = await createDynamicAgent(ctx);
+      const agent = await createDynamicAgent(ctx, args.agentId);
 
       // Create or continue thread (destructure per @convex-dev/agent API)
       let threadId = args.threadId;
@@ -124,11 +147,12 @@ export const send = action({
         },
       );
 
-      // Log activity
+      // Log activity (include agentId if multi-agent)
       await ctx.runMutation(internal.activityLog.log, {
         actionType: 'chat_message',
         summary: `Responded to: "${args.message.slice(0, 50)}${args.message.length > 50 ? '...' : ''}"`,
         visibility: 'private',
+        ...(args.agentId && { agentId: args.agentId }),
       });
 
       // Extract tool call info from steps
@@ -185,6 +209,7 @@ export const stream = internalAction({
     threadId: v.optional(v.string()),
     message: v.string(),
     sessionId: v.string(),
+    agentId: v.optional(v.id('agents')),
   },
   returns: v.object({
     response: v.string(),
@@ -201,7 +226,7 @@ export const stream = internalAction({
     }
 
     // Use dynamic agent for SyncBoard-configured model + tools
-    const agent = await createDynamicAgent(ctx);
+    const agent = await createDynamicAgent(ctx, args.agentId);
 
     let threadId = args.threadId;
     let thread;
@@ -255,6 +280,7 @@ export const apiSend = internalAction({
     threadId: v.optional(v.string()),
     sessionId: v.string(),
     apiKeyId: v.optional(v.id('apiKeys')),
+    agentId: v.optional(v.id('agents')),
   },
   returns: v.object({
     response: v.optional(v.string()),
@@ -276,7 +302,7 @@ export const apiSend = internalAction({
 
     try {
       // Use dynamic agent for SyncBoard-configured model + tools
-      const agent = await createDynamicAgent(ctx);
+      const agent = await createDynamicAgent(ctx, args.agentId);
 
       // Create or continue thread
       let threadId = args.threadId;
@@ -294,12 +320,13 @@ export const apiSend = internalAction({
         prompt: args.message,
       });
 
-      // Log activity
+      // Log activity (include agentId if multi-agent)
       await ctx.runMutation(internal.activityLog.log, {
         actionType: 'api_chat',
         summary: `API: "${args.message.slice(0, 50)}${args.message.length > 50 ? '...' : ''}"`,
         visibility: 'private',
         channel: 'api',
+        ...(args.agentId && { agentId: args.agentId }),
       });
 
       // Get token usage from result if available

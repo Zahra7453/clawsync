@@ -15,11 +15,15 @@ Deploy an open source personal AI agent with chat UI, skills system, MCP support
 
 ## Features
 
-- **Public Chat UI** - Clean, real-time chat with streaming responses
-- **SyncBoard Admin** - Private dashboard to manage your agent
+- **Multi-Agent System** - Run multiple agents simultaneously, each with independent config, skills, MCP servers, and memory
+- **Shared Soul Documents** - Define reusable agent personalities that can power one or many agents
+- **Agent Controls** - Auto-run, pause, restart, single task, or think-to-continue modes per agent
+- **Agent-to-Agent Interaction** - Agents can communicate and delegate tasks to each other
+- **Public Chat UI** - Clean, real-time chat with streaming responses and agent selector
+- **SyncBoard Admin** - Private dashboard to manage agents, souls, skills, and integrations
 - **Skills System** - Template, webhook, or code-based skills with a marketplace for external registries
-- **Multi-Model** - Claude, GPT, Grok, Gemini, or any OpenRouter model
-- **MCP Support** - Connect to MCP servers or expose your agent as one
+- **Multi-Model** - Claude, GPT, Grok, Gemini, or any OpenRouter model (configurable per agent)
+- **MCP Support** - Connect to MCP servers or expose your agent as one (assignable per agent)
 - **Channel Integrations** - Telegram, Discord, WhatsApp, Slack, Email
 - **X (Twitter) Integration** - Read, reply, and post tweets from your agent
 - **AgentMail** - Email inboxes for your agent with rate limits
@@ -29,7 +33,8 @@ Deploy an open source personal AI agent with chat UI, skills system, MCP support
 - **AI Analytics** - Weekly or manual deep analysis of metrics with anomaly detection and recommendations
 - **Agent Research** - Competitive, topic, and real-time X research with external API sources
 - **Persistent Memory** - Supermemory integration for long-term recall across conversations
-- **Live Activity Feed** - Public real-time log of agent actions
+- **Live Activity Feed** - Public real-time log of agent actions with per-agent filtering
+- **Unified Agent Feed** - Combined activity view across all agents with filter chips
 
 ## Quick Start
 
@@ -207,10 +212,14 @@ ClawSync supports xAI's Grok models alongside Claude, GPT, and others.
 clawsync/
 ├── convex/                    # Convex backend
 │   ├── agent/                 # Agent core
-│   │   ├── clawsync.ts       # Agent definition
+│   │   ├── clawsync.ts       # Agent definition with multi-agent factory
 │   │   ├── security.ts       # Security checker
-│   │   ├── toolLoader.ts     # Dynamic tool loading
-│   │   └── modelRouter.ts    # Multi-model routing
+│   │   ├── toolLoader.ts     # Per-agent tool loading with ask_agent tools
+│   │   └── modelRouter.ts    # Per-agent model routing
+│   ├── agents.ts              # Multi-agent CRUD
+│   ├── souls.ts               # Shared soul document CRUD
+│   ├── agentAssignments.ts    # Per-agent skill/MCP assignments
+│   ├── agentInteractions.ts   # Agent-to-agent interaction log
 │   ├── auth.config.ts         # WorkOS config (placeholder)
 │   ├── xTwitter.ts            # X/Twitter integration
 │   ├── staticHosting.ts       # Self-static-hosting API
@@ -235,8 +244,12 @@ clawsync/
 ├── src/                       # React frontend
 │   ├── pages/
 │   │   ├── LandingPage.tsx    # Public landing with tweets + activity
-│   │   ├── ChatPage.tsx       # Chat UI
+│   │   ├── ChatPage.tsx       # Chat UI with agent selector
 │   │   ├── SetupWizard.tsx    # First-run setup
+│   │   ├── SyncBoardAgents.tsx    # Multi-agent management
+│   │   ├── SyncBoardAgentDetail.tsx # Agent configuration
+│   │   ├── SyncBoardSouls.tsx     # Shared soul documents
+│   │   ├── SyncBoardAgentFeed.tsx # Unified agent activity feed
 │   │   ├── SyncBoardX.tsx     # X/Twitter config
 │   │   ├── SyncBoardMedia.tsx # File manager
 │   │   ├── SyncBoardStagehand.tsx # Browser automation
@@ -247,6 +260,13 @@ clawsync/
 │   │   ├── SyncBoard*.tsx     # Other admin pages
 │   │   └── SyncBoardLogin.tsx # Password login
 │   ├── components/
+│   │   ├── agents/            # Multi-agent UI components
+│   │   │   ├── AgentCard.tsx  # Agent summary card
+│   │   │   ├── AgentControls.tsx # Run/pause/restart controls
+│   │   │   ├── AgentSelector.tsx # Chat agent picker
+│   │   │   └── AgentFeedItem.tsx # Activity feed entry
+│   │   ├── chat/              # Chat components
+│   │   └── syncboard/         # SyncBoard layout
 │   └── styles/
 │       ├── tokens.css         # Design tokens (Geist fonts)
 │       └── global.css

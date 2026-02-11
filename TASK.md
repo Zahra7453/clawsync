@@ -276,6 +276,35 @@
 
 ---
 
+### Multi-Agent System (2026-02-10)
+
+- [x] Schema: 5 new tables (agents, souls, agentSkillAssignments, agentMcpAssignments, agentInteractions)
+- [x] Schema: added agentId field and by_agentId index to activityLog
+- [x] Backend: agents.ts CRUD (list, get, create, update, remove, reorder, status/mode control)
+- [x] Backend: souls.ts CRUD (list, get, create, update, remove with usage check)
+- [x] Backend: agentAssignments.ts per-agent skill and MCP server management
+- [x] Backend: agentInteractions.ts logging and retrieval
+- [x] Backend: updated createDynamicAgent in clawsync.ts with optional agentId
+- [x] Backend: updated toolLoader.ts with per-agent tool scoping and ask_agent tools
+- [x] Backend: added resolveModelFromConfig to modelRouter.ts
+- [x] Backend: updated chat.ts (send, stream, apiSend) with optional agentId and mode checks
+- [x] Backend: updated activityLog.ts with agentId param and listByAgent query
+- [x] Backend: updated http.ts with GET /api/v1/agents and agentId in chat endpoint
+- [x] Backend: updated setup.ts with auto-migration from agentConfig to multi-agent
+- [x] Frontend: AgentCard, AgentControls, AgentSelector, AgentFeedItem components
+- [x] Frontend: SyncBoardAgents page with agent list and create form
+- [x] Frontend: SyncBoardAgentDetail page with tabbed configuration
+- [x] Frontend: SyncBoardSouls page for shared soul management
+- [x] Frontend: SyncBoardAgentFeed page with unified timeline and filters
+- [x] Frontend: ChatPage updated with AgentSelector and agent switching
+- [x] Frontend: AgentChat updated to pass agentId to backend
+- [x] Frontend: SyncBoardLayout nav updated with Agents, Souls, Agent Feed links
+- [x] Frontend: App.tsx routes for all new pages
+- [x] features.html updated with Multi-Agent, Shared Souls, Agent Controls cards
+- [x] clawsynclanding/dist/index.html updated with new feature cards
+- [x] Convex codegen passes with 0 new errors
+- [x] TypeScript strict check passes (no new errors from multi-agent changes)
+
 ## In Progress
 
 _None currently_

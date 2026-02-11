@@ -46,6 +46,7 @@ http.route({ path: '/api/v1/data/usage', method: 'OPTIONS', handler: handleOptio
 http.route({ path: '/api/v1/mcp/tools', method: 'OPTIONS', handler: handleOptions });
 http.route({ path: '/api/v1/mcp/tools/call', method: 'OPTIONS', handler: handleOptions });
 http.route({ path: '/api/v1/mcp/resources', method: 'OPTIONS', handler: handleOptions });
+http.route({ path: '/api/v1/agents', method: 'OPTIONS', handler: handleOptions });
 
 // ============================================
 // Health Check
@@ -86,7 +87,7 @@ http.route({
 
     try {
       const body = await request.json();
-      const { message, threadId, sessionId } = body;
+      const { message, threadId, sessionId, agentId } = body;
 
       if (!message || typeof message !== 'string') {
         return errorResponse('Missing or invalid message', 400, cors);
@@ -94,12 +95,13 @@ http.route({
 
       const startTime = Date.now();
 
-      // Call the chat action
+      // Call the chat action (agentId is optional for multi-agent)
       const result = await ctx.runAction(internal.chat.apiSend, {
         message,
         threadId,
         sessionId: sessionId ?? `api_${auth.apiKey?._id}`,
         apiKeyId: auth.apiKey?._id,
+        ...(agentId && { agentId }),
       });
 
       // Log usage
@@ -213,6 +215,36 @@ http.route({
     });
 
     return jsonResponse({ threadId: thread.threadId }, 201, cors);
+  }),
+});
+
+// ============================================
+// Multi-Agent API
+// ============================================
+
+// GET /api/v1/agents - List all agents
+http.route({
+  path: '/api/v1/agents',
+  method: 'GET',
+  handler: httpAction(async (ctx, request) => {
+    const origin = request.headers.get('Origin');
+    const cors = getCorsHeaders(origin);
+
+    const auth = await authenticateRequest(ctx, request, {
+      requiredScopes: ['data:read'],
+    });
+
+    if (!auth.valid) {
+      return errorResponse(auth.error!, auth.statusCode, cors);
+    }
+
+    try {
+      // Use the internal list query
+      const allAgents: any[] = await ctx.runQuery(internal.agents.listAll);
+      return jsonResponse({ agents: allAgents }, 200, cors);
+    } catch (error) {
+      return errorResponse('Failed to list agents', 500, cors);
+    }
   }),
 });
 

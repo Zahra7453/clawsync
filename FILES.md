@@ -45,15 +45,19 @@ Brief descriptions of key files in the ClawSync codebase.
 | `skillsMarketplaceActions.ts` | Skills marketplace sync action (Node.js: fetches from GitHub, registries) |
 | `supermemory.ts` | Supermemory config queries and mutations |
 | `supermemoryActions.ts` | Supermemory actions (Node.js: add/search memories, store conversations) |
+| `agents.ts` | Multi-agent CRUD (list, get, create, update, remove, reorder, status/mode control) |
+| `souls.ts` | Shared soul document CRUD (list, get, create, update, remove) |
+| `agentAssignments.ts` | Per-agent skill and MCP server assignment management |
+| `agentInteractions.ts` | Agent-to-agent interaction logging and retrieval |
 
 ### convex/agent/
 
 | File | Description |
 |------|-------------|
-| `clawsync.ts` | Agent definition with `languageModel` API and `createDynamicAgent` factory |
+| `clawsync.ts` | Agent definition with `createDynamicAgent(ctx, agentId?)` factory supporting multi-agent |
 | `security.ts` | Security checker (runs on every tool invocation) |
-| `toolLoader.ts` | Assembles tools from skills + MCP servers using `createTool` and `jsonSchema` (type-safe API refs) |
-| `modelRouter.ts` | Resolves provider + model from agentConfig (supports anthropic, openai, xai, openrouter, custom) |
+| `toolLoader.ts` | Assembles tools from skills + MCP servers, scoped per-agent with agent-to-agent interaction tools |
+| `modelRouter.ts` | Resolves provider + model from agentConfig or per-agent config (supports anthropic, openai, xai, openrouter, custom) |
 
 ### convex/voice/
 
@@ -96,6 +100,10 @@ Brief descriptions of key files in the ClawSync codebase.
 | `SyncBoardResearch.tsx` | Research project manager (competitive, topic, realtime, API) |
 | `SyncBoardAnalytics.tsx` | AI analytics report viewer and manual trigger |
 | `SyncBoardMemory.tsx` | Supermemory configuration and memory management |
+| `SyncBoardAgents.tsx` | Multi-agent list view with create form |
+| `SyncBoardAgentDetail.tsx` | Agent detail config (soul, model, skills, MCP, activity tabs) |
+| `SyncBoardSouls.tsx` | Shared soul document management |
+| `SyncBoardAgentFeed.tsx` | Unified activity feed across all agents |
 
 ### src/components/
 
@@ -106,6 +114,10 @@ Brief descriptions of key files in the ClawSync codebase.
 | `chat/MessageList.tsx` | Scrollable message list |
 | `syncboard/SyncBoardLayout.tsx` | Admin sidebar layout with navigation |
 | `syncboard/SyncBoardLayout.css` | Sidebar and layout styles |
+| `agents/AgentCard.tsx` | Agent summary card with status, model, and inline controls |
+| `agents/AgentControls.tsx` | Agent operational controls (run, pause, restart, single task, think to continue) |
+| `agents/AgentSelector.tsx` | Agent picker dropdown for chat header |
+| `agents/AgentFeedItem.tsx` | Activity feed entry with agent badge and action icon |
 
 ### src/styles/
 
