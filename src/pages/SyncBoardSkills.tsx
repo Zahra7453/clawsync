@@ -108,7 +108,7 @@ export function SyncBoardSkills() {
 
             {skills && skills.length > 0 ? (
               <div className="skills-list">
-                {skills.map((skill: { _id: string; name: string; description: string; skillType: string; status: string; approved: boolean; rateLimitPerMinute: number; timeoutMs?: number }) => (
+                {skills.map((skill) => (
                   <div key={skill._id} className="skill-card">
                     <div className="skill-header">
                       <h3 className="skill-name">{skill.name}</h3>

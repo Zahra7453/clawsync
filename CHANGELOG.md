@@ -63,6 +63,20 @@ All notable changes to ClawSync are documented here.
 - `convex/_generated/` added to `.gitignore`
 
 ### Fixed
+- Full TypeScript strict pass: resolved all remaining TS errors across 13 files to reach zero errors
+- `agentMail.ts`: prefixed unused `ctx` params in `fetchInboxes` and `fetchMessages` actions
+- `api/auth.ts`: removed unused `QueryCtx` import
+- `http.ts`: prefixed unused `ctx`/`request` params in 5 TODO webhook handlers
+- `mcp.ts`: prefixed unused `ctx` in `listResources`/`readResource`, removed unused `kbId` assignment
+- `mcp/server.ts`: prefixed unused `params` destructure
+- `skillInvocations.ts`: removed unused `mutation` import
+- `xTwitterActions.ts`: prefixed unused `ctx` in `readTweet` and `searchRecentTweets`
+- `SyncBoardActivity.tsx`: removed explicit `{ _id: string }` type annotation, lets Convex infer `Id<"activityLog">`
+- `SyncBoardAgentMail.tsx`: removed unused `ArrowsClockwise` import
+- `SyncBoardApi.tsx`: removed explicit type annotation from map callback, fixes `string` vs `Id<"apiKeys">`
+- `SyncBoardChannels.tsx`: removed explicit type annotation from map callback, fixes `string` vs `Id<"channelConfig">`
+- `SyncBoardMcp.tsx`: removed explicit type annotation from map callback, fixes `string` vs `Id<"mcpServers">` and optional `url`
+- `SyncBoardSkills.tsx`: removed explicit type annotation from map callback, fixes `string` vs `Id<"skillRegistry">`
 - `xTwitter.ts`: Removed `'use node'` directive, split actions to `xTwitterActions.ts` (mutations cannot run in Node.js)
 - `voice/providers.ts`: Extracted handlers with explicit return types to break circular type references through `internal.voice`
 - `voice/providers.ts`: Fixed spread type errors (ternary instead of `&&` for conditional object spreads)

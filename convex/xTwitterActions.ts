@@ -136,7 +136,7 @@ export const readTweet = action({
     tweetId: v.string(),
   },
   returns: v.any(),
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const bearerToken = process.env.X_BEARER_TOKEN;
     if (!bearerToken) {
       throw new Error('X_BEARER_TOKEN not configured');
@@ -164,7 +164,7 @@ export const searchRecentTweets = action({
     maxResults: v.optional(v.number()),
   },
   returns: v.any(),
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const bearerToken = process.env.X_BEARER_TOKEN;
     if (!bearerToken) {
       throw new Error('X_BEARER_TOKEN not configured');

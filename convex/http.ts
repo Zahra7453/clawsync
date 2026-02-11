@@ -498,7 +498,7 @@ http.route({
 http.route({
   path: '/api/webhook/telegram',
   method: 'POST',
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (_ctx, _request) => {
     // TODO: Implement Telegram webhook handler
     // 1. Verify X-Telegram-Bot-Api-Secret-Token header
     // 2. Parse payload
@@ -514,7 +514,7 @@ http.route({
 http.route({
   path: '/api/webhook/whatsapp',
   method: 'POST',
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (_ctx, _request) => {
     // TODO: Implement WhatsApp webhook handler
     console.log('WhatsApp webhook received');
     return jsonResponse({ ok: true });
@@ -525,7 +525,7 @@ http.route({
 http.route({
   path: '/api/webhook/slack',
   method: 'POST',
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (_ctx, _request) => {
     // TODO: Implement Slack Events API handler
     console.log('Slack webhook received');
     return jsonResponse({ ok: true });
@@ -536,7 +536,7 @@ http.route({
 http.route({
   path: '/api/webhook/discord',
   method: 'POST',
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (_ctx, _request) => {
     // TODO: Implement Discord Interactions handler
     console.log('Discord webhook received');
     return jsonResponse({ type: 1 }); // Pong response
@@ -547,7 +547,7 @@ http.route({
 http.route({
   path: '/api/webhook/email',
   method: 'POST',
-  handler: httpAction(async (ctx, request) => {
+  handler: httpAction(async (_ctx, _request) => {
     // TODO: Implement email inbound handler
     console.log('Email webhook received');
     return jsonResponse({ ok: true });

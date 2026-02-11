@@ -17,7 +17,7 @@ import { internal } from '../_generated/api';
 // MCP server handler
 export const handler = httpAction(async (ctx, request) => {
   const body: { method: string; params?: Record<string, unknown> } = await request.json();
-  const { method, params } = body;
+  const { method, params: _params } = body;
 
   switch (method) {
     case 'tools/list': {

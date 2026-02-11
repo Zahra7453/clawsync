@@ -209,7 +209,7 @@ export const listResources = internalAction({
     description: v.string(),
     mimeType: v.optional(v.string()),
   })),
-  handler: async (ctx) => {
+  handler: async (_ctx) => {
     // Get knowledge bases or other resources
     // For now, return empty list - can be extended to include:
     // - Knowledge base entries
@@ -243,13 +243,13 @@ export const readResource = internalAction({
     uri: v.string(),
   },
   returns: v.any(),
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     // Parse URI and fetch resource
     const uri = args.uri;
 
     if (uri.startsWith('kb://')) {
-      // Knowledge base resource
-      const kbId = uri.replace('kb://', '');
+      // Knowledge base resource (not yet implemented)
+      // const kbId = uri.replace('kb://', '');
       // const kb = await ctx.db.get(kbId as any);
       // return kb?.content;
       return { error: 'Knowledge base not implemented yet' };

@@ -2,6 +2,16 @@
 
 ## Completed Tasks
 
+### Full TypeScript Strict Pass (2026-02-10)
+
+- [x] Fixed all remaining TypeScript errors across 13 backend and frontend files
+- [x] Backend: prefixed unused params with `_` in agentMail, http, mcp, mcp/server, xTwitterActions
+- [x] Backend: removed unused imports in api/auth.ts and skillInvocations.ts
+- [x] Frontend: removed explicit `{ _id: string }` type annotations from map callbacks in 5 SyncBoard pages
+- [x] Frontend: removed unused ArrowsClockwise import in SyncBoardAgentMail.tsx
+- [x] `npx convex codegen` passes clean
+- [x] `npx tsc --noEmit` passes with zero errors
+
 ### SyncBoard Feature Expansion (2026-02-09)
 
 - [x] Media file manager (Convex native default, R2 optional)
